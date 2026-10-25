@@ -92,12 +92,12 @@ export async function login(input: LoginInput): Promise<AuthResult> {
     where: eq(users.email, email),
   });
   if (!user) {
-    throw unauthorized("Invalid email or password");
+    throw unauthorized("Email tidak terdaftar");
   }
 
   const valid = await Bun.password.verify(input.password, user.passwordHash);
   if (!valid) {
-    throw unauthorized("Invalid email or password");
+    throw unauthorized("Password salah");
   }
 
   const token = await createSessionToken({ id: user.id, email: user.email });
