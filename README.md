@@ -113,6 +113,27 @@ Catatan:
 - `COOKIE_SECURE=true` dan `NODE_ENV=production` saat deploy di HTTPS.
 - `FRONTEND_URL` dipakai untuk konfigurasi CORS.
 
+### Generate `JWT_SECRET` untuk Production
+
+JWT di project ini dibuat menggunakan library **`jose`** (via `SignJWT` HS256) di `backend/src/modules/auth/auth.service.ts`. Secret digunakan untuk menandatangani token session yang disimpan di cookie `HttpOnly`.
+
+**Cara generate secret yang aman:**
+
+```bash
+# Linux / macOS (OpenSSL)
+openssl rand -base64 32
+
+# Atau Node.js
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+```
+
+Output contoh (gunakan ini sebagai nilai `JWT_SECRET`):
+```
+k8vL9mN2pQ5rT8wYzA1bC3dE4fG6hJ7kL9mN2pQ5rT8=
+```
+
+> ⚠️ **Jangan gunakan secret default `dev_secret_change_me` di production.** Secret harus minimal 32 byte (256 bit) dan unik per deployment.
+
 ### Frontend (`frontend/.env`)
 
 ```bash
@@ -212,7 +233,7 @@ bun run preview    # cek hasil build secara lokal
 ```
 
 > Saat production, set `COOKIE_SECURE=true`, `NODE_ENV=production`, isi
-> `JWT_SECRET` yang kuat, dan arahkan `FRONTEND_URL` ke domain frontend.
+> `JWT_SECRET` yang kuat (lihat [Generate JWT_SECRET](#generate-jwt_secret-untuk-production)), dan arahkan `FRONTEND_URL` ke domain frontend.
 
 ---
 
